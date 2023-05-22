@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var toDoItems: [ToDoItem] = []//empty array of the object we made
+    @State private var showNewTask = false//flag for the plus button
+
+    
+    
     var body: some View {
 
         VStack {
@@ -19,14 +25,30 @@ struct ContentView: View {
                 Spacer()
                 
                 Button(action: {
-                                    
+                    self.showNewTask = true
                 }) {
                 Text("+")
                 }
                 Spacer()
             }//end of Hstack
             .padding()
+            List {
+                
+                ForEach (toDoItems) {
+                    toDoItem in
+                    if toDoItem.isImportant == true {
+                        Text("‼️" + toDoItem.title)
+                    } else {
+                        Text(toDoItem.title)
+                    }
+                }//displays !! for important tasks. Notice website had error with a nested if. Delete second IF
+                
+            }//end of list
         }//end of Vstack
+        
+        if showNewTask {
+            NewToDoView(title: "", isImportant: false, toDoItems: $toDoItems,showNewTask: $showNewTask)
+                }//transitions once the button is clicked
     }
 }
 

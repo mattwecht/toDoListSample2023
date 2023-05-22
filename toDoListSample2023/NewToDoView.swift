@@ -10,6 +10,9 @@ import SwiftUI
 struct NewToDoView: View {
     @State var title: String
     @State var isImportant: Bool//State allows us refresh the vars whenever they are changed
+    @Binding var toDoItems: [ToDoItem]//two way connection between ContentView and newToDoView
+    @Binding var showNewTask : Bool//connects to button flag from content view
+    
     
     var body: some View {
         VStack{
@@ -28,6 +31,9 @@ struct NewToDoView: View {
                         }
             
             Button(action: {
+                self.addTask(title: self.title, isImportant: self.isImportant)//calls our custom function
+                
+                self.showNewTask = false//hide the add section
               
             }) {
                 Text("Add")
@@ -36,10 +42,17 @@ struct NewToDoView: View {
             .padding()
         }//end of VStack
     }
-}
+
+    private func addTask(title: String, isImportant: Bool = false) {
+            
+            let task = ToDoItem(title: title, isImportant: isImportant)
+            toDoItems.append(task)
+        }//function that creates the tasks
+    
+}//end of struct
 
 struct NewToDoView_Previews: PreviewProvider {
     static var previews: some View {
-        NewToDoView(title: "TEST", isImportant: false)//sets default values for the state vars
+        NewToDoView(title: "TEST", isImportant: false, toDoItems: .constant([]),showNewTask: .constant(true))//sets default values for the state vars/binding vars
     }
 }

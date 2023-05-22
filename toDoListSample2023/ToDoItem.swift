@@ -6,7 +6,9 @@
 //
 
 import Foundation
-class toDo {
+class ToDoItem: Identifiable {//inherits from Identifiable
+    
+    var id = UUID()// creates a unique identifier for each instance 
     var title : String
     var isImportant : Bool
     
