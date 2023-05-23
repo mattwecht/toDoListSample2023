@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct toDoListSample2023App: App {
+    let persistenceController = PersistenceController.shared//allows project to access core data
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext)
+            
         }
     }
 }

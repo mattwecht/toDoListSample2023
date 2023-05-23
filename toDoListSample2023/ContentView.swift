@@ -8,8 +8,26 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var context//allows for delete
+    private func deleteTask(offsets: IndexSet) {
+            withAnimation {
+                offsets.map { toDoItems[$0] }.forEach(context.delete)
+
+                do {
+                    try context.save()
+                } catch {
+                    print(error)
+                }
+            }
+        }
     
-    @State var toDoItems: [ToDoItem] = []//empty array of the object we made
+    
+    //@State var toDoItems: [ToDoItem] = []//empty array of the object we made
+    @FetchRequest(
+            entity: ToDo.entity(), sortDescriptors: [ NSSortDescriptor(keyPath: \ToDo.id, ascending: false) ])
+        //change ascending to true to sort by alphabet
+    var toDoItems: FetchedResults<ToDo>
+    
     @State private var showNewTask = false//flag for the plus button
 
     
@@ -37,18 +55,30 @@ struct ContentView: View {
                 ForEach (toDoItems) {
                     toDoItem in
                     if toDoItem.isImportant == true {
+                        Text("‼️" + (toDoItem.title ?? "No title"))
+                    } else {
+                        Text(toDoItem.title ?? "No title")
+                    }
+                    /*if toDoItem.isImportant == true {
                         Text("‼️" + toDoItem.title)
                     } else {
                         Text(toDoItem.title)
-                    }
-                }//displays !! for important tasks. Notice website had error with a nested if. Delete second IF
+                    }*/ //THIS IS HOW TO DO WITHOUT CORE DATA
+                    
+                }
+                .onDelete(perform: deleteTask)
+                //displays !! for important tasks. Notice website had error with a nested if. Delete second IF
                 
             }//end of list
         }//end of Vstack
         
-        if showNewTask {
+       /* if showNewTask {
             NewToDoView(title: "", isImportant: false, toDoItems: $toDoItems,showNewTask: $showNewTask)
-                }//transitions once the button is clicked
+            
+                }*/ //transitions once the button is clicked
+        if showNewTask {
+            NewToDoView(title: "", isImportant: false, showNewTask: $showNewTask)
+        }
     }
 }
 
